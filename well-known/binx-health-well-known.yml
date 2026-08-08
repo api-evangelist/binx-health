@@ -1,0 +1,85 @@
+generated: '2026-08-07'
+method: probed
+source: live GET probes of the /.well-known/ discovery surface on every binx health host
+result: none
+summary: >-
+  No /.well-known/ discovery document is published on any binx health host. Every
+  canonical path on the primary host returns an honest 404. The help-centre host
+  answers 401 to every path including a randomly generated control path, so its
+  401s are a blanket deny and carry no evidence that any document exists behind
+  them. Recorded here so a later round does not re-probe blind; absence is the
+  finding, and no WellKnown or SecurityTxt pointer is wired because nothing was
+  found.
+hosts:
+- host: mybinxhealth.com
+  note: primary corporate site (WordPress on WP Engine, fronted by Cloudflare)
+  control:
+    path: /.well-known/zz-control-not-real
+    status: 404
+    bytes: 50529
+  documents:
+  - path: /.well-known/security.txt
+    status: 404
+  - path: /.well-known/openid-configuration
+    status: 404
+  - path: /.well-known/oauth-authorization-server
+    status: 404
+  - path: /.well-known/oauth-protected-resource
+    status: 404
+  - path: /.well-known/api-catalog
+    status: 404
+  - path: /.well-known/ai-plugin.json
+    status: 404
+  - path: /.well-known/agent-card.json
+    status: 404
+  - path: /.well-known/agent.json
+    status: 404
+  - path: /.well-known/mcp.json
+    status: 404
+  - path: /llms.txt
+    status: 404
+- host: help.mybinxhealth.com
+  note: >-
+    Salesforce Experience Cloud community (redirects / to /s/). Returns 401 to
+    every path probed, including the control, so no individual 401 is evidence
+    of a gated document.
+  control:
+    path: /.well-known/zz-control-not-real
+    status: 401
+    bytes: 616
+  documents:
+  - path: /.well-known/security.txt
+    status: 401
+  - path: /.well-known/oauth-authorization-server
+    status: 401
+  - path: /.well-known/oauth-protected-resource
+    status: 401
+  - path: /.well-known/api-catalog
+    status: 401
+  - path: /.well-known/ai-plugin.json
+    status: 401
+  - path: /.well-known/agent-card.json
+    status: 401
+  - path: /.well-known/agent.json
+    status: 401
+  - path: /.well-known/mcp.json
+    status: 401
+  - path: /llms.txt
+    status: 401
+rejected:
+- host: binxhealth.com
+  reason: soft-404
+  detail: >-
+    binxhealth.com answers HTTP 200 with an identical 3135-byte Squarespace
+    "Coming Soon" HTML page for every path, including /openapi.json,
+    /swagger.json, /.well-known/agent-card.json and a randomly generated control
+    path. The domain is parked and none of those 200s is evidence of a document.
+  evidence:
+  - url: https://binxhealth.com/openapi.json
+    status: 200
+    bytes: 3135
+    content_type: text/html;charset=utf-8
+  - url: https://binxhealth.com/definitely-not-a-real-path-xyzzy123.json
+    status: 200
+    bytes: 3135
+    content_type: text/html;charset=utf-8
